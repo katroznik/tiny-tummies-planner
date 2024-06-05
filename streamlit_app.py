@@ -8,12 +8,12 @@ import os
 from datetime import datetime
 
 # Verify wkhtmltopdf installation
-if os.system('which wkhtmltopdf') != 0:
-    raise EnvironmentError('wkhtmltopdf not installed or not found in PATH.')
+#if os.system('which wkhtmltopdf') != 0:
+#    raise EnvironmentError('wkhtmltopdf not installed or not found in PATH.')
 
 # Specify the path to wkhtmltopdf
-path_to_wkhtmltopdf = '/usr/bin/wkhtmltopdf'  # Update this path based on your environment
-pdfkit_config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)
+#path_to_wkhtmltopdf = '/usr/bin/wkhtmltopdf'  # Update this path based on your environment
+#pdfkit_config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)
 
 # Path to the log file
 log_file = "food_log.csv"
