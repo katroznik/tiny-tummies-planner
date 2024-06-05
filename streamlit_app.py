@@ -2,18 +2,11 @@ import altair as alt
 import numpy as np
 import streamlit as st
 import pandas as pd
-import pdfkit
+
 import base64
 import os
 from datetime import datetime
 
-# Verify wkhtmltopdf installation
-#if os.system('which wkhtmltopdf') != 0:
-#    raise EnvironmentError('wkhtmltopdf not installed or not found in PATH.')
-
-# Specify the path to wkhtmltopdf
-#path_to_wkhtmltopdf = '/usr/bin/wkhtmltopdf'  # Update this path based on your environment
-#pdfkit_config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)
 
 # Path to the log file
 log_file = "food_log.csv"
@@ -272,38 +265,6 @@ def get_categories(selected_items):
             categories[category].append(item)
     return categories
 
-# Function to generate HTML for PDF
-def generate_html(meal_plans):
-    html = """
-    <html>
-    <head>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-            }
-            h1, h2, h3 {
-                color: #333;
-            }
-            p {
-                color: #555;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>Tiny Tummies Planner</h1>
-    """
-    for date, meal_plan in meal_plans.items():
-        html += f"<h2>{date}</h2>"
-        for meal, items in meal_plan.items():
-            if items:  # Only include meals with selected items
-                html += f"<h3>{meal}</h3>"
-                for item in items:
-                    html += f"<p>- {item}</p>"
-    html += """
-    </body>
-    </html>
-    """
-    return html
 
 # Streamlit app layout
 st.set_page_config(page_title="Tiny Tummies Planner", page_icon=":baby_bottle:")
@@ -361,7 +322,6 @@ st.sidebar.title("Navigation")
 st.sidebar.markdown("[Your Meal Plans](#your-meal-plans)")
 st.sidebar.markdown("[Categories of Selected Items](#categories-of-selected-items)")
 st.sidebar.markdown("[Shopping List](#shopping-list)")
-st.sidebar.markdown("[Save as PDF](#save-as-pdf)")
 st.sidebar.markdown("[Food Log](#food-log)")
 st.sidebar.markdown("[Food Statistics](#food-statistics)")
 
@@ -429,22 +389,7 @@ for category, items in categories.items():
     st.subheader(category.capitalize())
     st.write(', '.join(items))
 
-# Function to create a download link for the PDF
-def create_download_link(pdf_path):
-    with open(pdf_path, "rb") as f:
-        pdf_bytes = f.read()
-    b64 = base64.b64encode(pdf_bytes).decode()
-    return f'<a href="data:application/octet-stream;base64,{b64}" download="meal_plan.pdf">Download PDF</a>'
 
-# Add button to save as PDF
-st.header("Save as PDF")
-st.markdown('<a name="save-as-pdf"></a>', unsafe_allow_html=True)
-if st.button("Save as PDF"):
-    html = generate_html(meal_plans)
-    pdf_path = '/tmp/meal_plan.pdf'
-    pdfkit.from_string(html, pdf_path, configuration=pdfkit_config)
-    st.success("PDF saved!")
-    st.markdown(create_download_link(pdf_path), unsafe_allow_html=True)
 
 # Food log section
 st.header("Food Log")
