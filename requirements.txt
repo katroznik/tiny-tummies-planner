@@ -1,2 +1,5 @@
-streamlit-nightly
+streamlit
 pandas
+altair
+numpy
+pdfkit
