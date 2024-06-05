@@ -1,8 +1,19 @@
+import altair as alt
+import numpy as np
 import streamlit as st
 import pandas as pd
+import pdfkit
 import base64
+import os
 from datetime import datetime
-from weasyprint import HTML
+
+# Verify wkhtmltopdf installation
+if os.system('which wkhtmltopdf') != 0:
+    raise EnvironmentError('wkhtmltopdf not installed or not found in PATH.')
+
+# Specify the path to wkhtmltopdf
+path_to_wkhtmltopdf = '/usr/bin/wkhtmltopdf'  # Update this path based on your environment
+pdfkit_config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)
 
 # Path to the log file
 log_file = "food_log.csv"
@@ -150,6 +161,8 @@ food_items = {
     "Bread": ["allergen"],
     "Apricot": ["fruit", "digestion aid"],
     "Cauliflower": ["veggie"],
+    "Wheat pasta":["allergen", "energy-rich", "iron-rich"],
+    "Wheat porridge":["allergen", "energy-rich", "iron-rich"],
     "Pumpkin": ["veggie"],
     "Artichoke": ["veggie"],
     "Kale": ["veggie"],
@@ -161,15 +174,13 @@ food_items = {
     "Mustard greens": ["veggie"],
     "Leek": ["veggie"],
     "Quinoa": ["energy-rich", "iron-rich"],
-    "Couscous": ["allergen"],
+    "Cous cous": ["allergen"],
     "Tuna": ["allergen", "energy-rich", "iron-rich"],
     "Anchovy": ["allergen", "energy-rich", "iron-rich"],
     "Haddock": ["allergen"],
     "Tilapia": ["allergen"],
     "Rice noodles": ["allergen", "energy-rich"],
     "Chickpea pasta": ["energy-rich", "iron-rich"],
-    "Wheat pasta":["allergen", "energy-rich", "iron-rich"],
-    "Wheat porridge":["allergen", "energy-rich", "iron-rich"],
     "Pumpkin seeds": ["energy-rich", "iron-rich"],
     "Hemp seeds": ["energy-rich", "iron-rich"],
     "Sunflower seeds": ["energy-rich", "iron-rich"],
@@ -336,7 +347,7 @@ st.markdown("Plan a nutritious and balanced menu for your little one.")
 
 # About section
 st.sidebar.title("About")
-st.sidebar.markdown("My name is Kat and I made this app for myself to streamline meal prep for my son. Hope you also find it helpful! Check out my Substack Baby Saavy")
+st.sidebar.markdown("My name is Kat and I made this app for myself to streamline meal prep for my son. Hope you also find it helpful! Don't forget to subscribe to my Substack Baby Saavy!")
 
 # Initialize meal plans
 meal_plans = {}
@@ -431,7 +442,7 @@ st.markdown('<a name="save-as-pdf"></a>', unsafe_allow_html=True)
 if st.button("Save as PDF"):
     html = generate_html(meal_plans)
     pdf_path = '/tmp/meal_plan.pdf'
-    HTML(string=html).write_pdf(pdf_path)
+    pdfkit.from_string(html, pdf_path, configuration=pdfkit_config)
     st.success("PDF saved!")
     st.markdown(create_download_link(pdf_path), unsafe_allow_html=True)
 
